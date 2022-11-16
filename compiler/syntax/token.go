@@ -43,6 +43,7 @@ const (
 	_Private                // private
 	_Defer                  // defer
 	_Const                  // const
+	_GOTO					// goto
 	_This                   // this
 	_Super                  // super
 	_Return                 // return
@@ -56,11 +57,10 @@ const (
 	_While                  // while
 	_If                     // if
 	_Else                   // else
-	_Switch                 // switch
+	_When                 	// when
 	_Case                   // case
 	_Default                // default
 	_Static                 // static
-	_Final                  // final
 	_Throws                 // throws
 	_Throw                  // throw
 	_Print                  // print
@@ -68,5 +68,5 @@ const (
 	_Println                // println
 	_Nil                    // nil
 	_Chan                   // chan
-	_Run                    // run
+	_Go                    	// go
 )
