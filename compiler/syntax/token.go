@@ -33,31 +33,30 @@ const (
 	_DotDotDot              // ...
 	_Package                // package
 	_Import                 // import
-	_Fun                    // fun
+	_Sealed                 // sealed
 	_Class                  // class
 	_Interface              // interface
 	_Abstract               // abstract
+	_Fn                     // fn
 	_Enum                   // enum
 	_Public                 // public
 	_Protect                // protect
 	_Private                // private
 	_Defer                  // defer
 	_Const                  // const
-	_GOTO					// goto
+	_GOTO                   // goto
 	_This                   // this
 	_Super                  // super
 	_Return                 // return
 	_Break                  // break
 	_Continue               // continue
-	_Try                    // try
-	_Catch                  // catch
-	_Finally                // finally
+	_Except                 // except
 	_For                    // for
 	_Do                     // do
 	_While                  // while
 	_If                     // if
 	_Else                   // else
-	_When                 	// when
+	_When                   // when
 	_Case                   // case
 	_Default                // default
 	_Static                 // static
@@ -68,5 +67,5 @@ const (
 	_Println                // println
 	_Nil                    // nil
 	_Chan                   // chan
-	_Go                    	// go
+	_Go                     // go
 )
