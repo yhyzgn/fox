@@ -13,4 +13,5 @@ import (
 
 func main() {
 	fmt.Println(utf8.RuneSelf)
+	fmt.Println(utf8.UTFMax)
 }

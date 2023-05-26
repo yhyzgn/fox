@@ -9,63 +9,89 @@ package syntax
 type token uint
 
 const (
-	_          token = iota //
-	_EOF                    // EOF
-	_Name                   // name
-	_Literal                // literal
-	_Operator               // op
-	_AssignOp               // op=
-	_OpOp                   // opop
-	_Assign                 // =
-	_Define                 // :=
-	_Arrow                  // <-
-	_Star                   // *
-	_Lparen                 // (
-	_Lbracket               // [
-	_Lbrace                 // {
-	_Rparen                 // )
-	_Rbracket               // ]
-	_Rbrace                 // }
-	_Comma                  // ,
-	_Semi                   // ;
-	_Colon                  // :
-	_Dot                    // .
-	_DotDotDot              // ...
-	_Package                // package
-	_Import                 // import
-	_Sealed                 // sealed
-	_Class                  // class
-	_Interface              // interface
-	_Abstract               // abstract
-	_Fn                     // fn
-	_Enum                   // enum
-	_Public                 // public
-	_Protect                // protect
-	_Private                // private
-	_Defer                  // defer
-	_Const                  // const
-	_GOTO                   // goto
-	_This                   // this
-	_Super                  // super
-	_Return                 // return
-	_Break                  // break
-	_Continue               // continue
-	_Except                 // except
-	_For                    // for
-	_Do                     // do
-	_While                  // while
-	_If                     // if
-	_Else                   // else
-	_When                   // when
-	_Case                   // case
-	_Default                // default
-	_Static                 // static
-	_Throws                 // throws
-	_Throw                  // throw
-	_Print                  // print
-	_Printf                 // printf
-	_Println                // println
-	_Nil                    // nil
-	_Chan                   // chan
-	_Go                     // go
+	_ token = iota //
+
+	Name    // name
+	Literal // literal
+
+	Assign  // =
+	Define  // :=
+	Receive // <-
+	Star    // *
+
+	Not // !
+
+	OrOr   // ||
+	AndAnd // &&
+
+	Eql // ==
+	Neq // !=
+	Lss // <
+	Leq // <=
+	Gtr // >
+	Geq // >=
+
+	Add    // +
+	Sub    // -
+	Or     // |
+	And    // &
+	Xor    // ^
+	AndNot // &^
+	Mul    // *
+	Div    // /
+	Rem    // %
+	Shl    // <<
+	Shr    // >>
+
+	Lparen    // (
+	Lbracket  // [
+	Lbrace    // {
+	Rparen    // )
+	Rbracket  // ]
+	Rbrace    // }
+	Comma     // ,
+	Semi      // ;
+	Colon     // :
+	Dot       // .
+	DotDotDot // ...
+
+	Package   // package
+	Import    // import
+	Sealed    // sealed
+	Class     // class
+	Interface // interface
+	Abstract  // abstract
+	Fn        // fn
+	Enum      // enum
+	Public    // public
+	Protect   // protect
+	Private   // private
+	Defer     // defer
+	Const     // const
+	GOTO      // goto
+	This      // this
+	Super     // super
+	Return    // return
+	Break     // break
+	Continue  // continue
+	Except    // except
+	For       // for
+	Do        // do
+	While     // while
+	If        // if
+	Else      // else
+	When      // when
+	Case      // case
+	Default   // default
+	Static    // static
+	Throws    // throws
+	Throw     // throw
+	Print     // print
+	Printf    // printf
+	Println   // println
+	Nil       // nil
+	Chan      // chan
+	Run       // run
+	EOF       // EOF
+	ERROR     // error
 )
