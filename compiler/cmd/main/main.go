@@ -1,17 +1,13 @@
 // author : 颜洪毅
 // e-mail : yhyzgn@gmail.com
-// time   : 2022-07-14 11:29
+// time   : 2023-08-25 15:29
 // version: 1.0.0
 // desc   :
 
 package main
 
-import (
-	"fmt"
-	"unicode/utf8"
-)
+import "fmt"
 
 func main() {
-	fmt.Println(utf8.RuneSelf)
-	fmt.Println(utf8.UTFMax)
+	fmt.Println("Hello X")
 }
