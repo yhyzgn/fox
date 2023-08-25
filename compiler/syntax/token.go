@@ -8,6 +8,8 @@ package syntax
 
 type token uint
 
+//go:generate stringer -type token -linecomment token.go
+
 const (
 	_ token = iota //
 
@@ -19,7 +21,8 @@ const (
 	Receive // <-
 	Star    // *
 
-	Not // !
+	Not   // !
+	Tilde // ~
 
 	OrOr   // ||
 	AndAnd // &&
@@ -31,17 +34,20 @@ const (
 	Gtr // >
 	Geq // >=
 
-	Add    // +
-	Sub    // -
-	Or     // |
-	And    // &
-	Xor    // ^
-	AndNot // &^
-	Mul    // *
-	Div    // /
-	Rem    // %
-	Shl    // <<
-	Shr    // >>
+	Add      // +
+	Sub      // -
+	Or       // |
+	And      // &
+	Xor      // ^
+	AndNot   // &^
+	Mul      // *
+	Div      // /
+	Rem      // %
+	Shl      // <<
+	Shr      // >>
+	Op       // op
+	AssignOp // op=
+	IncOp    // opop
 
 	Lparen    // (
 	Lbracket  // [
@@ -94,4 +100,24 @@ const (
 	Run       // run
 	EOF       // EOF
 	ERROR     // error
+)
+
+type LitKind uint8
+
+const (
+	IntLit LitKind = iota
+	FloatLit
+	ImagLit
+	CharLit
+	StringLit
+)
+
+// Operator precedences
+const (
+	_ = iota
+	precOrOr
+	precAndAnd
+	precCmp
+	precAdd
+	precMul
 )
