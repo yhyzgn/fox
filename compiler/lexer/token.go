@@ -93,6 +93,11 @@ const (
 	MulAssign // *=
 	DivAssign // /=
 	ModAssign // %=
+	AndAssign // &=
+	OrAssign  // |=
+	XorAssign // ^=
+	ShlAssign // <<=
+	ShrAssign // >>=
 	AddAdd    // ++
 	SubSub    // --
 	Lparen    // (
@@ -105,8 +110,23 @@ const (
 	Semi      // ;
 	Colon     // :
 	Dot       // .
+	DotDot    // ..
 	DotDotDot // ...
+
+	LineComment  // //
+	BlockComment // /* comment */
+	DocComment   // /** doc */
 
 	EOF   // EOF
 	Error // error
+)
+
+type LiteralKind uint8
+
+const (
+	IntLit LiteralKind = iota
+	FloatLit
+	ImagLit
+	CharLit
+	StringLit
 )
