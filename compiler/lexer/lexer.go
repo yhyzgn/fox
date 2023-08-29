@@ -38,6 +38,9 @@ func (l *lexer) next() {
 redo:
 	l.stop()
 
+	l.kind = None
+	l.literal = ""
+
 	startLine, startCol := l.pos()
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\r' || l.ch == '\n' {
 		l.nextCh()
@@ -57,10 +60,11 @@ redo:
 	switch l.ch {
 	case -1:
 		l.tok = EOF
+		l.literal = "EOF"
 
 	case ';':
 		l.nextCh()
-		l.literal = "semicolon"
+		l.literal = ";"
 		l.tok = Semi
 
 	case '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
@@ -78,39 +82,48 @@ redo:
 	case '(':
 		l.nextCh()
 		l.tok = Lparen
+		l.literal = "("
 
 	case '[':
 		l.nextCh()
 		l.tok = Lbracket
+		l.literal = "["
 
 	case '{':
 		l.nextCh()
 		l.tok = Lbrace
+		l.literal = "{"
 
 	case ')':
 		l.nextCh()
 		l.tok = Rparen
+		l.literal = ")"
 
 	case ']':
 		l.nextCh()
 		l.tok = Rbracket
+		l.literal = "]"
 
 	case '}':
 		l.nextCh()
 		l.tok = Rbrace
+		l.literal = "}"
 
 	case ',':
 		l.nextCh()
 		l.tok = Comma
+		l.literal = ","
 
 	case ':':
 		l.nextCh()
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = Define
+			l.literal = ":="
 			break
 		}
 		l.tok = Colon
+		l.literal = ":"
 
 	case '.':
 		l.nextCh()
@@ -122,63 +135,77 @@ redo:
 			l.nextCh()
 			if isDecimal(l.ch) {
 				l.tok = Dot
+				l.literal = "."
 				break
 			}
 			if l.ch == '.' {
 				l.nextCh()
 				if isDecimal(l.ch) {
 					l.tok = DotDot
+					l.literal = ".."
 					break
 				}
 				l.tok = DotDotDot
+				l.literal = "..."
 				break
 			}
 			l.tok = DotDot
+			l.literal = ".."
 			break
 		}
 		l.tok = Dot
+		l.literal = "."
 
 	case '+':
 		l.nextCh()
 		if l.ch == '+' {
 			l.nextCh()
 			l.tok = AddAdd
+			l.literal = "++"
 			break
 		}
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = AddAssign
+			l.literal = "+="
 			break
 		}
 		l.tok = Add
+		l.literal = "+"
 
 	case '-':
 		l.nextCh()
 		if l.ch == '-' {
 			l.nextCh()
 			l.tok = SubSub
+			l.literal = "--"
 			break
 		}
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = SubAssign
+			l.literal = "-="
 			break
 		}
 		if l.ch == '>' {
 			l.nextCh()
 			l.tok = Arrow
+			l.literal = "->"
 			break
 		}
 		l.tok = Sub
+		l.literal = "-"
 
 	case '*':
 		l.nextCh()
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = MulAssign
+			l.literal = "*="
 			break
 		}
 		l.tok = Mul
+		l.literal = "*"
 
 	case '/':
 		l.nextCh()
@@ -200,66 +227,80 @@ redo:
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = DivAssign
+			l.literal = "/="
 			break
 		}
 		l.tok = Div
+		l.literal = "/"
 
 	case '%':
 		l.nextCh()
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = ModAssign
+			l.literal = "%="
 			break
 		}
 		l.tok = Mod
+		l.literal = "%"
 
 	case '&':
 		l.nextCh()
 		if l.ch == '&' {
 			l.nextCh()
 			l.tok = AndAnd
+			l.literal = "&&"
 			break
 		}
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = AndAssign
+			l.literal = "&="
 			break
 		}
 		if l.ch == '^' {
 			l.nextCh()
 			l.tok = AndNot
+			l.literal = "&^"
 			break
 		}
 		l.tok = And
+		l.literal = "&"
 
 	case '|':
 		l.nextCh()
 		if l.ch == '|' {
 			l.nextCh()
 			l.tok = OrOr
+			l.literal = "||"
 			break
 		}
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = OrAssign
+			l.literal = "|="
 			break
 		}
 		l.tok = Or
+		l.literal = "|"
 
 	case '^':
 		l.nextCh()
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = XorAssign
+			l.literal = "^="
 			break
 		}
 		l.tok = Xor
+		l.literal = "^"
 
 	case '<':
 		l.nextCh()
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = Leq
+			l.literal = "<="
 			break
 		}
 		if l.ch == '<' {
@@ -267,23 +308,28 @@ redo:
 			if l.ch == '=' {
 				l.nextCh()
 				l.tok = ShlAssign
+				l.literal = "<<="
 				break
 			}
 			l.tok = Shl
+			l.literal = "<<"
 			break
 		}
 		if l.ch == '-' {
 			l.nextCh()
 			l.tok = Receive
+			l.literal = "<-"
 			break
 		}
 		l.tok = Lss
+		l.literal = "<"
 
 	case '>':
 		l.nextCh()
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = Geq
+			l.literal = ">="
 			break
 		}
 		if l.ch == '>' {
@@ -291,34 +337,42 @@ redo:
 			if l.ch == '=' {
 				l.nextCh()
 				l.tok = ShrAssign
+				l.literal = ">>="
 				break
 			}
 			l.tok = Shr
+			l.literal = ">>"
 			break
 		}
 		l.tok = Gtr
+		l.literal = ">"
 
 	case '=':
 		l.nextCh()
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = Eql
+			l.literal = "=="
 			break
 		}
 		l.tok = Assign
+		l.literal = "="
 
 	case '!':
 		l.nextCh()
 		if l.ch == '=' {
 			l.nextCh()
 			l.tok = Neq
+			l.literal = "!="
 			break
 		}
 		l.tok = Not
+		l.literal = "!"
 
 	case '~':
 		l.nextCh()
 		l.tok = Tilde
+		l.literal = "~"
 
 	default:
 		l.errorf("Invalid character %#U", l.ch)
@@ -331,7 +385,8 @@ func (l *lexer) lineComment() {
 	for {
 		l.nextCh()
 		if l.ch == '\n' {
-			l.tok = LineComment
+			l.tok = Comment
+			l.kind = LineCommentLit
 			l.literal = string(l.segment())
 			break
 		}
@@ -340,14 +395,16 @@ func (l *lexer) lineComment() {
 
 func (l *lexer) blockComment() {
 	if l.skipComment() {
-		l.tok = BlockComment
+		l.tok = Comment
+		l.kind = BlockCommentLit
 		l.literal = string(l.segment())
 	}
 }
 
 func (l *lexer) docComment() {
 	if l.skipComment() {
-		l.tok = DocComment
+		l.tok = Comment
+		l.kind = DocCommentLit
 		l.literal = string(l.segment())
 	}
 }
@@ -580,6 +637,7 @@ func (l *lexer) ident() {
 	if len(lit) >= 2 {
 		if tok := keywordReversedMap[string(lit)]; tok != 0 && tokStrFast(tok) == string(lit) {
 			l.tok = tok
+			l.literal = string(lit)
 			return
 		}
 	}

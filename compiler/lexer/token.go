@@ -113,9 +113,7 @@ const (
 	DotDot    // ..
 	DotDotDot // ...
 
-	LineComment  // //
-	BlockComment // /* comment */
-	DocComment   // /** doc */
+	Comment // // /* comment */ /** doc */
 
 	EOF   // EOF
 	Error // error
@@ -124,9 +122,13 @@ const (
 type LiteralKind uint8
 
 const (
-	IntLit LiteralKind = iota
+	None LiteralKind = iota
+	IntLit
 	FloatLit
 	ImagLit
 	CharLit
 	StringLit
+	LineCommentLit
+	BlockCommentLit
+	DocCommentLit
 )

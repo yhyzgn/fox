@@ -18,7 +18,7 @@ func errHandler(line, col uint, msg string) {
 
 func TestSmoke(t *testing.T) {
 	const src = "if (+foo\t+=..123/*块注释*/...666/**文档注释*/0.9_0e-0i'a'`raw`\"string\"....234..f.;->// 行注释\n"
-	tokens := []token{If, Lparen, Add, Identifier, AddAssign, Dot, Literal, BlockComment, DotDot, Literal, DocComment, Literal, Literal, Literal, Literal, DotDotDot, Literal, DotDot, Identifier, Dot, Semi, Arrow, LineComment, EOF}
+	tokens := []token{If, Lparen, Add, Identifier, AddAssign, Dot, Literal, Comment, DotDot, Literal, Comment, Literal, Literal, Literal, Literal, DotDotDot, Literal, DotDot, Identifier, Dot, Semi, Arrow, Comment, EOF}
 
 	var got lexer
 	got.init(strings.NewReader(src), errHandler)
@@ -28,7 +28,7 @@ func TestSmoke(t *testing.T) {
 			t.Errorf("%d:%d: got %s; want %s", got.line, got.col, got.tok, want)
 			continue
 		}
-		t.Logf("%d:%d: got %s", got.line, got.col, got.tok)
+		t.Logf("%d:%d: got %s, kind = %s, literal = %s", got.line, got.col, got.tok, got.kind.String(), got.literal)
 		if got.tok == EOF {
 			break
 		}
