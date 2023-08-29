@@ -34,3 +34,16 @@ func TestSmoke(t *testing.T) {
 		}
 	}
 }
+
+func TestIf(t *testing.T) {
+	const src = "if x >= 200 { return true }"
+	var got lexer
+	got.init(strings.NewReader(src), errHandler)
+	for {
+		got.next()
+		t.Logf("%d:%d: got %s, kind = %s, literal = %s", got.line, got.col, got.tok, got.kind.String(), got.literal)
+		if got.tok == EOF {
+			break
+		}
+	}
+}
