@@ -21,8 +21,8 @@ const (
 	Enum      // enum
 	Abs       // abs
 	Sealed    // sealed
+	Is        // is
 	Pub       // pub
-	Pro       // pro
 	Pri       // pri
 	Fn        // fn
 	Defer     // defer
@@ -34,14 +34,9 @@ const (
 	Continue  // continue
 	Expect    // expect
 	For       // for
-	Do        // do
-	While     // while
 	If        // if
 	Else      // else
 	When      // when
-	Case      // case
-	Default   // default
-	Static    // static
 	Throws    // throws
 	Throw     // throw
 	Nil       // nil
