@@ -18,6 +18,7 @@ var tokenMap = map[token]string{
 	Abs:        "abs",
 	Sealed:     "sealed",
 	Is:         "is",
+	As:         "as",
 	Pub:        "pub",
 	Pri:        "pri",
 	Fn:         "fn",

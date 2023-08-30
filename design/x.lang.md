@@ -34,8 +34,13 @@ import "demo/test/filename";
 
 ```x
 // 主函数
-// 名称:`main`，可见性：`pub`，无参数，无返回值
-pub fn main() {
+// 名称:`main`，无参数，无返回值
+fn main() {
+}
+
+// 一个普通函数
+// 名称:`doX`，可见性：`pub`，无参数，无返回值
+pub fn doX() {
 }
 
 // 文件内可见
@@ -319,6 +324,8 @@ pub class BClass: XClass ~ XInterface {
 
 ## 3、变量类型
 
+采用小驼峰（`camelCase`）命名规范
+
 ### 3.1、格式
 
 > 所有变量在使用前必须先声明
@@ -463,7 +470,7 @@ identifier [, identifier [...]] := value [, value [...]];
 
 * `IDENTIFIER`
 
-  常量名
+  常量名，采用大写下划线（`UPPER_SNAKE_CASE`）命名规范
 
 * `VALUE`
 
@@ -993,7 +1000,7 @@ int[10][20] arr = int[10][20];
   * 实现自定义异常
 
     ```x
-    pub MyError ~ Error {
+    pub class MyError ~ Error {
     }
     ```
 
@@ -1044,39 +1051,833 @@ try {
 
 ### 11.1、普通用法
 
-### 11.2、继承
+#### 11.1.1、类的定义
 
-#### 11.2.1、单继承
+* 格式
 
-#### 11.2.2、多继承
+  ```x
+  /**
+   * 类的 doc 注释
+   */
+  [pub | pri] [sealed] class ClassName {
+  }
+  ```
+
+  * 访问修饰符
+
+    可使用默认、`pub`、`pri` 三种访问修饰符
+
+  * `sealed` 关键字
+
+    被 `sealed` 关键字修饰的类不可被其他类继承
+
+  * `doc` 文档注释
+
+    用于生成 `doc` 文档说明
+
+  * `ClassName` 类名
+
+    采用大驼峰（`PascalCase`）命名规范
+
+* 示例
+
+  * 无访问修饰符
+
+    ```x
+    /**
+     * 该类只能包内被访问
+     */
+    class ClassX {
+    }
+    ```
+
+  * 有访问修饰符
+
+    ```x
+    /**
+     * 该类不可被访问
+     */
+    pri class ClassX {
+    }
+    
+    /**
+     * 该类可被任意访问
+     */
+    pub class ClassX {
+    }
+    ```
+
+  * 不可被继承
+
+    ```x
+    sealed class ClassX {
+    }
+    ```
 
 
 
-## 12、接口
+### 11.2、构造方法
+
+#### 11.2.1、格式
+
+```x
+[pub | pri] ClassName([type paramName [, type paramName1 ...]]) {
+	// 给字段初始化赋值
+}
+```
+
+* 访问修饰符
+
+  * `pub`
+
+    可被外界任意访问
+
+  * `pri`
+
+    仅可在当前文件内访问
+
+    > 以文件 `/demo/demo.x` 文件为例
+
+    ```x
+    class Demo {
+    
+    	pri Demo() {}
+    }
+    
+    // 仅在当前文件可访问
+    pub fn createDemo() -> Demo {
+    	return Demo();
+    }
+    ```
+
+  * 默认
+
+    仅可被当前包和子孙类访问
+
+* 方法名
+
+  与类名一致
+
+* 参数
+
+  参数列表与普通函数相同用法
+
+* 返回值
+
+  不声明返回值类型
+
+  返回值为当前类的一个实例
 
 
 
-## 13、抽象类
+### 11.3、成员
+
+> 成员变量和方法
+
+#### 11.3.1、变量（字段）
+
+命名规范跟 “变量” 一致
+
+* 格式
+
+  ```x
+  /**
+   * 字段的文档注释
+   */
+  [pub | pri] type fieldName;
+  ```
+
+  * 访问修饰符
+
+    可使用默认、`pub`、`pri` 三种访问修饰符
+
+  * 字段的文档注释
+
+    用于生成 `doc` 文档说明
+
+  * `type`
+
+    字段类型
+
+  * `fieldName` 字段名
+
+    采用小驼峰（`camelCase`）命名规范
+
+* 使用
+
+  `pub` 修饰的字段可通过实例直接访问
+
+  ```x
+  class ClassX {
+  	pub string name;
+  }
+  
+  fn main() {
+  	// 使用默认的空参构造函数
+  	ClassX x = ClassX();
+  	// 通过实例直接访问公开字段
+  	println("x.name = {}", x.name);
+  	
+  	// 修改
+  	x.name = "X";
+  }
+  ```
+
+  `pri` 修饰的字段不可被外界直接访问，仅可在当前类直接访问，外界需借助相应的 `getX()` 和 `setX(...)` 方法来进行访问操作
+
+  ```x
+  class ClassX {
+  	pri string name;
+  	
+  	// 需要提供对应的 get 和 set 方法
+  	
+  	pub getName() -> string {
+  		return name;
+  	}
+  	
+  	pub setName(string name) {
+  		this.name = name;
+  	}
+  }
+  
+  fn main() {
+  	// 使用默认的空参构造函数
+  	ClassX x = ClassX();
+  	// 通过 getX() 方法访问
+  	println("x.name = {}", x.getName());
+  	
+  	// 修改
+  	x.setName("X");
+  }
+  ```
+
+  默认无访问修饰符的字段j仅可被其子孙类访问
+
+  ```x
+  class Root {
+  	string name;
+  }
+  
+  class Parent : Root {
+  	string age;
+  	
+  	pub doX() {
+  		println("name = {name}, age = {age}");
+  	}
+  }
+  
+  class X : Parent {
+  	string count;
+  	
+  	pub doX() {
+  		println("name = {name}, age = {age}, count = {count}");
+  	}
+  }
+  ```
+
+####  11.3.2、方法
+
+> 类提供用于操作处理字段的一类行为函数
+
+* 格式
+
+  ```tex
+  [pub | pri] methodName([type paramName [, type paramName1 ...]]) [-> returnType [, returnType ...]] [throws ErrorClass [, Error2 ...]] {
+  	// 函数体
+  }
+  ```
+
+  * 访问修饰符
+
+    访问修饰符与字段用法一致
+
+  * 方法名
+
+    采用小驼峰（`camelCase`）命名规范
+
+  * 参数列表
+
+    无参、一个或多个参数
+
+  * 返回值列表
+
+    用符号 `->` 指定返回值列表及其类型
+
+  * 异常错误
+
+    用 `throws` 关键字声明可能会抛出的异常类型
+
+* 示例
+
+  ```x
+  class X {
+  
+  	/**
+  	 * pub 修饰
+  	 * 一个 string 类型的参数 name
+  	 * 一个 string 类型的返回值
+  	 * 一个异常错误 MyError 声明
+  	 */
+  	pub doX(string name) -> string throws MyError {
+  		if name == "" {
+  			throw MyError("姓名不能为空");
+  		}
+  		return format("name = {name}");
+  	}
+  }
+  
+  fn main() {
+  	X x = X();
+  	
+  	try {
+  		string result = x.doX("姓名");
+  		println(result);
+  	} catch(MyError err) {
+  		panic(err);
+  	}
+  }
+  ```
 
 
 
-## 14、枚举
+### 11.4、继承
+
+> 支持单继承与多继承，多继承时必须为父类们指定别名
+>
+> `sealed` 修饰的类不可被继承
+
+使用 `:` 实现类的继承关系
+
+```tex
+[pub | pri] class ClassName : ParentClassName {
+}
+```
+
+#### 11.4.1、单继承
+
+```x
+pub class Parent {
+	pri string name;
+	
+	pub Parent(string name) {
+		this.name = name;
+	}
+	
+	pub getName() -> string {
+		return name;
+	}
+}
+
+pub class X : Parent {
+	pub string age;
+	
+	pub X(string name, int age) {
+		super(name);
+		this.age = age;
+	}
+}
+
+// 外部访问
+fn main() {
+	X x = X("姓名", 22);
+	println("x.name = {}, x.age = {}", x.getName(), x.age);
+}
+```
+
+#### 11.4.2、多继承
+
+> 多继承需要分别指定父类的别名，以解决构造方法的初始化和方法重写冲突的问题
+>
+> 如果所继承的多个父类中有签名相同的方法，则子类必须重新实现该方法
+
+使用 `as` 关键字为每个关键字指定别名
+
+多个父类直接用 `,` 隔开
+
+```x
+pub class Father {
+	pri string name;
+	
+	pub Father(string name) {
+		this.name = name;
+	}
+	
+	pub getName() -> string {
+		return name;
+	}
+	
+	pub doX() -> string {
+		// 这是 Father 类的 doX() 方法实现
+		return "Father";
+	}
+}
+
+pub class Mother {
+	pri int age;
+	
+	pub Mother(int age) {
+		this.age = age;
+	}
+	
+	pub getAge() -> int {
+		return age;
+	}
+	
+	pub doX() -> string {
+		// 这是 Mother 类的 doX() 方法实现
+		return "Mother";
+	}
+}
+
+pub class X : Father as fa, Mother as mo {
+	pub int count;
+
+	pub X(string name, int age, count) {
+		// 此处无法使用 super 来初始化父类
+		// 必须使用别名初始化
+		fa(name);
+		mo(age);
+		
+		// 父类初始化完后才能初始化当前类的字段
+		this.count = count;
+	}
+	
+	/**
+	 * 由于两个父类中都有该方法，所以此处必须重写，否则调用方将无法得知该方法的执行逻辑
+	 */
+	pub doX() -> string {
+		// 如果以 Father 类的实现为准
+		return fa.doX();
+		
+		// 如果以 Mother 类的实现为准
+		return mo.doX();
+		
+		// 也可以实现自己的逻辑
+		string resFa = fa.doX();
+		string resMo = ma.doX();
+		return format("resFa = {resFa}, resMo = {resMo}");
+	}
+}
+
+// 外部调用
+fn main() {
+	X x = X("姓名", 22, 10);
+	println("x.name = {}, x.age = {}, x.count = {}, x.doX() = {}", x.getName(), x.getAge(), x.count, x.doX());
+}
+```
+
+#### 11.4.3、重写
+
+对于父类中的某些方法，子类需要有自己的实现逻辑。此时需要通过重写操作来实现该方法的自定义。
+
+要求访问修饰符、方法名、返回值列表、错误异常声明列表 保持一致方能实现重新功能。
+
+```x
+pub class Parent {
+	pri string name;
+	
+	pub Parent(string name) {
+		this.name = name;
+	}
+	
+	pub getName() -> string {
+		return name;
+	}
+	
+	pub doX() -> string {
+		// 这是 Parent 类的 doX() 方法实现
+		return "Parent";
+	}
+}
+
+pub class X : Parent {
+	pub string age;
+	
+	pub X(string name, int age) {
+		super(name);
+		this.age = age;
+	}
+	
+	/**
+	 * 重写实现自己的逻辑
+	 */
+	pub doX() -> string {
+		string res = super.doX();
+		return format("res = {res}");
+	}
+}
+
+// 外部访问
+fn main() {
+	X x = X("姓名", 22);
+	println("x.name = {}, x.age = {}, x.doX() = {}", x.getName(), x.age, x.doX());
+}
+```
 
 
 
-## 15、注解
+## 12、重载
+
+同一个类内，具有相同的方法名，却有不同的参数列表的现象叫做重载，跟返回值类型和异常声明列表无关。
+
+即类提供相同行为的多中方法，至于要调用哪个方法需要由调用方决定。
+
+通过调用方所传的实参列表自动匹配对应的方法被调用。
+
+```x
+pub class X {
+
+	pub doX() -> string throws MyError {}
+	
+	pub doX(string name) -> string throws MyError {}
+	
+	// 与返回值无关，这种是错的
+	// 因为已经存在相同方法名和参数列表的方法
+	pub doX() {}
+	
+	// 与异常类型无关，这种也是错的
+	// 因为已经存在相同方法名和参数列表的方法
+	pub doX(string name) -> int throws MyError {}
+}
+```
 
 
 
-## 16、泛型
+## 13、接口
+
+具有共同性质和行为却行为方式多样化的一类事物的抽象统称
+
+用关键字 `interface` 来定义
+
+### 13.1、格式
+
+```tex
+[pub | pri] interface InterfaceName {
+
+	[methodName([type paramName [, ...]]) [ -> returnType [, ...]] [throws Error1 [, ...]];]
+}
+```
+
+* 访问修饰符
+
+  访问修饰符与 “类” 用法一致
+
+* `interface`
+
+  用 `interface` 声明接口
+
+* `InterfaceName`
+
+  接口名称，命名规范与 “类” 一致
+
+* 方法声明
+
+  `pub` 访问修饰符，不可变更，且无需手动指定
+
+  方法签名与 “类” 一致，但此处不能有方法体，方法签名结束需要以 `;` 结束
 
 
 
-## 17、并发
+### 13.2、实现
+
+> 接口不可直接创建实例
+>
+> 需要定义类来实现接口，才能通过创建类的实例来创建具有接口行为的实例
+
+通过符号 `~` 来定义接口实现功能
+
+必须实现接口声明的所有方法
+
+```x
+/**
+ * 接口声明
+ */
+pub interface XInterface {
+	
+	/**
+	 * 声明接口方法
+	 */
+	doX(string param) -> string, int throws MyError;
+	
+	/**
+	 * 可重载
+	 */
+	doX(string param, int param1) -> string, int throws MyError;
+}
+
+/**
+ * 通过符号 ~ 来实现接口
+ */
+pub class X ~ XInterface {
+
+	/**
+	 * 实现接口所定义的方法
+	 */
+	pub doX(string param) -> string, int throws MyError {
+		return param, 10;
+	}
+	
+	/**
+	 * 可重载
+	 */
+	pub doX(string param, int param1) -> string, int throws MyError {
+		return param, param1;
+	}
+}
+```
 
 
 
-## 18、内置函数
+## 14、抽象类
+
+一种特殊的类，可以拥有自己的字段和方法，但也有一些无法实现的方法，这些方法需要由继承该类的子类来具体实现
+
+用关键字 `abs` 来定义
+
+### 14.1、格式
+
+```tex
+[pub | pri] abs class AbsClassName {
+
+	[methodName([type paramName [, ...]]) [ -> returnType [, ...]] [throws Error1 [, ...]];]
+}
+```
+
+* 访问修饰符
+
+  访问修饰符与 “类” 用法一致
+
+* `abs`
+
+  用 `abs` 关键字声明类为抽象类
+
+* `AbsClassName`
+
+  接口名称，命名规范与 “类” 一致
+
+* 方法声明
+
+  `pub` 访问修饰符，不可变更，且无需手动指定
+
+  方法签名与 “类” 一致，但此处不能有方法体，方法签名结束需要以 `;` 结束
 
 
 
+### 14.2、实现
+
+> 抽象类也不可直接创建实例
+>
+> 需要定义类来继承该类并实现响应的抽象方法，才能通过创建类的实例来创建该抽象类的实例
+
+通过符号 `:` 来继承类
+
+必须实现父类声明的抽象方法
+
+```x
+/**
+ * 声明类为 抽象类
+ */
+pub abs class AbsClass {
+	
+	/**
+	 * 声明为抽象方法
+	 */
+	doX(string param) -> string, int throws MyError;
+	
+	/**
+	 * 可重载
+	 */
+	pub doX(string param, int param1) -> string, int throws MyError {
+		// 已实现的方法
+		return param, param1;
+	}
+}
+
+/**
+ * 通过符号 : 来继承类
+ */
+pub class X : AbsClass {
+
+	/**
+	 * 实现父类所声明的抽象方法
+	 */
+	pub doX(string param) -> string, int throws MyError {
+		return param, 10;
+	}
+}
+```
+
+
+
+## 15、枚举
+
+一种特殊的类，所建实例均为 “常量”
+
+用关键字 `enum` 来定义。
+
+### 15.1、格式
+
+```tex
+[pub | pri] enum EnumName [ ~ InterfaceName [, InterfaceName1 ...]] {
+	[MEMBER [, MEMBER1 ...]];
+	
+	[type fieldName;]
+	...
+	
+	[EnumName([type param ...]) {
+		// 构造方法
+	}]
+	
+	[[pub | pri] methodName([type param ...]) [ -> returnType ... throws Error ... ] {
+		// 方法体
+	}]
+}
+```
+
+* 访问修饰符
+
+  访问修饰符与 “类” 用法一致
+
+* `enum`
+
+  用 `enum` 关键字来声明枚举类
+
+* `EnumName`
+
+  类名，命名规范与 “类” 一致
+
+* 实现接口
+
+  可实现一些接口，用法与 “类” 一致
+
+* 枚举值
+
+  一些实例
+
+  访问修饰符为 `pub`，不可手动指定
+
+  需要通过构造方法创建
+
+  命名规范与 “常量” 一致
+
+  多个实例之间用 `,` 分割，结尾用 `;` 指定
+
+* 字段
+
+  访问修饰符为 `pri`，不可手动指定
+
+  其他用法与 “类” 一致
+
+* 构造方法
+
+  访问修饰符为 `pri`，不可手动指定
+
+  其他用法与 “类” 一致
+
+* 方法
+
+  用法与 “类” 一致
+
+
+
+### 15.2、使用
+
+#### 15.2.1、声明
+
+```x
+/**
+ * 普通声明，无字段和方法等
+ */
+pub enum Color {
+	RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET;
+}
+
+/**
+ * 复杂声明，有字段和方法
+ * 还实现了 ToString 接口
+ */
+pub enum ColorWithName ~ ToString {
+	RED("红色"),
+	ORANGE("橙色"),
+	YELLOW("黄色"),
+	GREEN("绿色"),
+	BLUE("蓝色"),
+	INDIGO("靛色"),
+	VIOLET("紫色"),
+	;
+	
+	string colorName;
+	
+	ColorWithName(string colorName) {
+		this.colorName = colorName;
+	}
+	
+	pub getColorName() -> string {
+		reutrn colorName;
+	}
+	
+	/**
+	 * 实现 ToString 接口的 toString() 方法
+	 */
+	 pub toString() -> string {
+	 	return format("color = {colorName}");
+	 }
+}
+```
+
+#### 15.2.2、外部调用
+
+```x
+fn main() {
+	Color red = Color.RED;
+	// 输出为：red = RED
+	println("red = {red}");
+	
+	// 结合 when 使用
+	when color {
+		RED -> println("红色"),
+		GREEN, VIOLET -> println("绿色或紫色"),
+		_ -> println("其他颜色")
+	}
+	
+	ColorWithName cwn = ColorWithName.BLUE;
+	// 输出为：cwn = BLUE
+	println("cwn = {red}");
+	// 输出为：颜色名称为：蓝色
+	println("颜色名称为：{}", cwn.toString());
+}
+```
+
+#### 15.2.3、枚举值迭代
+
+枚举类内置 `values()` 方法返回所有的枚举值成员为数组
+
+```x
+fn main() {
+	ColorWithName[] values = ColorWithName.values();
+	// 可迭代遍历
+	for index, item in values {
+		println("index = {index}, item = {item}, item.name = {}", item.toString());
+	}
+}
+```
+
+
+
+## 16、多态
+
+
+
+## 17、注解
+
+
+
+## 18、泛型
+
+
+
+## 19、并发
+
+
+
+## 20、内置函数
