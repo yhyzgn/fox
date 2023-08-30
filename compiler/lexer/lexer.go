@@ -374,6 +374,11 @@ redo:
 		l.tok = Tilde
 		l.literal = "~"
 
+	case '?':
+		l.nextCh()
+		l.tok = Question
+		l.literal = "?"
+
 	default:
 		l.errorf("Invalid character %#U", l.ch)
 		l.nextCh()

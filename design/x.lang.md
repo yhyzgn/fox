@@ -272,31 +272,7 @@ pub class BClass: XClass ~ XInterface {
 * 默认值 `0`
 * 例子：`ulong a = 10000000000, ulong b = -23223424444`
 
-#### 2.1.11、`ufloat`
-
-> 符合 `IEEE-754` 的 `32` 位（ `4` 字节）单精度无符号浮点型数
->
-> 不能用来表示精确的数值，如货币
-
-* 最小值 `0.0`
-* 最大值 `4,294,967,295 (2^32 - 1)`
-
-* 默认值 `0.0`
-* 例子：`ufloat a = 3.14`
-
-#### 2.1.12、`udouble`
-
-> 符合 `IEEE-754` 的 `64` 位（ `8` 字节）单精度无符号浮点型数
->
-> 不能用来表示精确的数值，如货币
-
-* 最小值 `0.0`
-* 最大值 `18,446,744,073,709,551,615 (2^64 - 1)`
-
-* 默认值 `0.0`
-* 例子：`double a = 3.14`
-
-#### 2.1.13、`bool`
+#### 2.1.11、`bool`
 
 > 用一个二进制位（ `1` 位）表示的整数
 
@@ -304,7 +280,7 @@ pub class BClass: XClass ~ XInterface {
 * 默认值 `false`
 * 例子：`bool a = true`
 
-#### 2.1.14、`char`
+#### 2.1.12、`char`
 
 > 一个单一的 `32` 位（ `4` 字节） `utf-8` 编码的 `Unicode` 字符
 >
@@ -319,7 +295,7 @@ pub class BClass: XClass ~ XInterface {
 * 默认值 `0`
 * 例子：`char a = 'x', char b = '中'`
 
-#### 2.1.15、`string`
+#### 2.1.13、`string`
 
 > 字符串就是一串固定长度的字符连接起来的字符序列
 >
@@ -601,7 +577,7 @@ identifier [, identifier [...]] := value [, value [...]];
 
 
 
-## 6、 循环语句
+## 6、循环语句
 
 以下为循环语句流程图
 
@@ -807,25 +783,260 @@ arrName := {1, 2, 3, 4};
 
 ### 9.2、数组访问处理
 
+以下操作示例中：
+
+```x
+// 创建一个示例数组
+int[] arr = int[];
+```
+
+* 数组长度
+
+  `length` 属性
+
+  ```x
+  // 获取数组的长度
+  int length = arr.length;
+  ```
+
+* 添加元素
+
+  * `push(...)` 方法
+
+    将元素添加到数组的末尾，并返回新的长度
+
+    ```x
+    int newLength = arr.push(2);
+    ```
+
+  * `unshift(...)` 方法
+
+    将元素添加到数组的开头，并返回新的长度
+
+    ```x
+    int newLength = arr.unshift(3);
+    ```
+
+* 删除元素
+
+  * `pop(...)` 方法
+
+    删除数组的最后一个元素，并返回该元素
+
+    ```x
+    int item = arr.pop();
+    ```
+
+  * `shift(...)` 方法
+
+    删除数组的第一个元素，并返回该元素
+
+    ```x
+    int item = arr.shift();
+    ```
+
+* 读取和更新元素
+
+  直接用数组下标访问
+
+  > 如果下标超过数组长度则抛出异常
+
+  ```x
+  // 获取第一个元素
+  int item = arr[0];
+  
+  // 更新第二个元素为 100
+  arr[1] = 100;
+  ```
+
+* 反转数组
+
+  提供 `reverse()` 方法，实现数组元素的反转
+
+  ```x
+  int[] reversedArr = arr.reverse();
+  ```
+
+* 连接数组
+
+  提供 `concat(...)` 方法，实现当前数组与一个或多个数组的拼接
+
+  > 要求待拼接的数组类型与当前数组类型一致，否则语法不通过
+
+  ```x
+  int[] a = int[] {2, 3, 4};
+  int[] b = int[] {5, 4, 8};
+  
+  // 拼接一个数组
+  int[] newArr = arr.concat(a);
+  
+  // 拼接多个数组
+  int newArr = arr.concat(a, b);
+  
+  // 拼接一个自动推导类型的数组
+  int newArr = arr.concat({9, 6, 3, 0});
+  ```
+
+* 连接元素
+
+  提供 `join(string with)` 方法，实现将数组元素按指定参数拼接成字符串的功能
+
+  ```x
+  string result = arr.join(", ");
+  
+  // 输出结果：1, 2, 3, 4
+  println(result);
+  ```
+
+* 查找索引
+
+  * `indexOf(...)` 方法
+
+    查找元素第一次出现的位置索引
+
+    ```x
+    int index = arr.indexOf(2);
+    ```
+
+  * `lastIndexOf(...)` 方法
+
+    查找元素最后一次出现的位置索引
+
+    ```x
+    int index = arr.lastIndexOf(2);
+    ```
+
 
 
 ### 9.3、遍历数组
 
+* 普通遍历
 
+  ```x
+  for int i = 0; i < arr.length; i++ {
+  	println("item[{i}] = {}", arr[i]);
+  }
+  ```
+
+* 迭代遍历
+
+  ```x
+  for index, item in arr {
+  	println("arr[{index}] = {item}");
+  }
+  ```
 
 ### 9.4、数组作为参数
+
+> 数组作为参数时为引用传递，如果被调用的函数内对参数数组进行了写操作，调用者处的数组将会受到同样的影响
+
+```x
+// 调用函数
+doX(arr);
+// 调用后此处的 arr[1] 元素将是修改后的 100
+
+fn doX(int[] arr) {
+	// 函数内对参数数组的元素进行了修改
+	arr[1] = 100;
+}
+```
 
 
 
 ### 9.5、数组作为返回值
 
+> 返回数组的作用域将自动延伸到与调用方作用域对齐
+
+```x
+// createArr() 返回数组的作用域将与 newArr 对齐
+int[] newArr = createArr();
+
+fn createArr() -> int[] {
+	// 返回一个数组
+	return {1, 2, 3};
+}
+```
+
 
 
 ### 9.6、多维数组
 
+> 当声明数组元素的类型也是数组时，将构成多维数组
+
+```x
+// 格式
+type[size1][size2]... arrName;
+
+// 示例（二维数组）
+int[10][20] arr = int[10][20];
+```
 
 
-## 10、异常
+
+## 10、错误处理
+
+### 10.1、标准接口
+
+> 需要实现标准接口方能作为错误异常类
+
+* `Error` 接口
+
+  抛出异常，进程不受影响
+
+  * 该接口的定义源码
+
+    ```x
+    interface Error {
+    }
+    ```
+
+  * 实现自定义异常
+
+    ```x
+    pub MyError ~ Error {
+    }
+    ```
+
+  
+
+### 10.2、声明错误与抛出
+
+如果一个函数或方法内需要抛出错误，需要现在函数或方法上声明异常类
+
+提供 `throws` 关键字用来声明错误，`throw` 关键字用来抛出错误
+
+```x
+// 函数
+pub fn doX() -> int, string throws MyPanic {
+	// 抛出
+	throw MyPanic();
+}
+
+pub class A {
+
+	// 方法
+	pub deal() -> int, string throws MyError, AnError {
+		throw MyError();
+	}
+}
+```
+
+
+
+### 10.3、错误捕获
+
+> 在可能出现异常的调用处使用 `try {...} catch(Error err) {} finally {}` 来捕获错误异常
+
+```x
+try {
+	int x, str = doX();
+	println("x = {x}, str = {str}");
+} catch(MyError err) {
+	// 错误处理
+} finally {
+	// 代码片段
+}
+```
 
 
 
@@ -853,15 +1064,19 @@ arrName := {1, 2, 3, 4};
 
 
 
-## 15、泛型
+## 15、注解
 
 
 
-## 16、并发
+## 16、泛型
 
 
 
-## 17、内置函数
+## 17、并发
+
+
+
+## 18、内置函数
 
 
 

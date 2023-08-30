@@ -19,6 +19,7 @@ const (
 	Class     // class
 	Interface // interface
 	Enum      // enum
+	Annotate  // annotate
 	Abs       // abs
 	Sealed    // sealed
 	Is        // is
@@ -32,7 +33,9 @@ const (
 	Return    // return
 	Break     // break
 	Continue  // continue
-	Expect    // expect
+	Try       // try
+	Catch     // catch
+	Finally   // finally
 	For       // for
 	If        // if
 	Else      // else
@@ -59,11 +62,15 @@ const (
 	Bool   // bool
 
 	Assign    // =
+	Comma     // ,
+	Semi      // ;
+	Colon     // :
 	Define    // :=
 	Receive   // <-
 	Arrow     // ->
 	Not       // !
 	Tilde     // ~
+	Question  // ?
 	Add       // +
 	Sub       // -
 	Or        // |
@@ -101,9 +108,6 @@ const (
 	Rparen    // )
 	Rbracket  // ]
 	Rbrace    // }
-	Comma     // ,
-	Semi      // ;
-	Colon     // :
 	Dot       // .
 	DotDot    // ..
 	DotDotDot // ...
