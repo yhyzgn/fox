@@ -21,7 +21,16 @@ pkg main;
 > 引入文件模块
 
 ```x
-import "demo/test/filename";
+// 格式
+import "pkgName.pkgName2.pkgName3.filename";
+import "pkgName.pkgName5.*";
+
+// 示例
+import "demo.test.filename";
+import "demo.x.*";
+
+// 别名
+import "demo.xx.filename as testFileName";
 ```
 
 
@@ -174,6 +183,45 @@ pub class BClass: XClass ~ XInterface {
 | `pub`  | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
 |  默认  | :heavy_check_mark: | :heavy_check_mark: |        :x:         |
 | `pri`  | :heavy_check_mark: |        :x:         |        :x:         |
+
+
+
+### 1.10、关键字表
+
+|   关键字    |             描述             |            示例            |
+| :---------: | :--------------------------: | :------------------------: |
+|    `pkg`    |           包名声明           |         `pkg std;`         |
+|  `import`   |             导入             |      `import std.*;`       |
+|   `class`   |            类声明            |        `class X {}`        |
+| `interface` |           接口声明           |      `interface X {}`      |
+|   `enum`    |           枚举声明           |        `enum X {}`         |
+| `annotate`  |           注解声明           |    `pub annotate X {}`     |
+|    `abs`    |          抽象类声明          |    `pub abs class X {}`    |
+|  `sealed`   |       不可被继承和重写       |  `pub sealed class X {}`   |
+|    `is`     |      是否为某个类的实例      |    `if x is ClassX {}`     |
+|    `as`     | 导入指定别名，多继承指定别名 |   `import a.b.c as cc;`    |
+|    `pub`    |        公共访问修饰符        |     `pub string name;`     |
+|    `pri`    |        私有访问修饰符        |       `pri int age;`       |
+|    `fn`     |           函数声明           |        `fn test();`        |
+|   `defer`   |     函数、方法的后置操作     |    `defer fn() {} ();`     |
+|   `const`   |           常量定义           |    `const int A = 22;`     |
+|   `this`    |           当前实例           |       `this.test();`       |
+|   `super`   |            父实例            |      `super.test();`       |
+|  `return`   |           返回结果           |        `return 22;`        |
+|   `break`   |           跳出循环           |          `break;`          |
+| `continue`  |  跳过本次循环，进入下次循环  |        `continue;`         |
+|    `try`    |           捕获异常           |          `try {}`          |
+|   `catch`   |           异常处理           |  `catch(MyError err) {}`   |
+|  `finally`  |      捕获异常的后置操作      |        `finally {}`        |
+|    `for`    |           循环语句           |     `for i := 0; ; {}`     |
+|    `if`     |           条件语句           |   `if a > 0 {} else {}`    |
+|   `else`    |           条件语句           |   `if a > 0 {} else {}`    |
+|   `when`    |           分支语句           |        `when x {}`         |
+|  `throws`   | 函数、方法可能抛出的异常声明 | `fn x() throws MyError {}` |
+|   `throw`   |           抛出异常           |     `throw MyError();`     |
+|    `nil`    |            空指针            |      `if nil == x {}`      |
+|    `bee`    |           开启协程           |       `bee async();`       |
+|   `goto`    |           标记跳转           |        `goto redo;`        |
 
 
 
@@ -1071,6 +1119,8 @@ try {
 
     被 `sealed` 关键字修饰的类不可被其他类继承
 
+    被 `sealed` 关键字修饰的方法不可被子类重写
+
   * `doc` 文档注释
 
     用于生成 `doc` 文档说明
@@ -1866,18 +1916,368 @@ fn main() {
 
 ## 16、多态
 
+多态是同一行为具有多个不同表现形式或形态的能力
+
+### 16.1、存在的三个必要条件
+
+* 继承
+* 重写
+* 父类引用指向子类对象，`Parent x = Child();`
+
+
+
+### 16.2、常规用法
+
+* 父类引用声明指向子类对象
+* 函数形参类型
+
 
 
 ## 17、注解
+
+凌驾于语言应用之上却又达不到代码编译功能的一种特殊能力定义，也属于一种特殊的类
+
+> 注解真是个好东西呀~
+
+### 17.1、格式
+
+注解类需要由 `annotate` 关键字定义
+
+```x
+@Target(CLASS [, FIELD, METHOD, FN ...])
+[pub | pri] annotate AnnoName {
+	[string value;]
+	[int count;]
+	[string[] names;]
+	[string text = "默认值";]
+}
+```
+
+* `@Target()`
+
+  指定该注解类的作用范围
+
+* 访问修饰符
+
+  与 “类” 用法一致
+
+* `annotate`
+
+  用于声明 “注解” 的关键字
+
+* `AnnoName`
+
+  注解类的名称，命名规范与 “类” 一致
+
+* 成员
+
+  所有成员都是 `pub` 修饰符，不可指定
+
+  `value` 作为默认字段名称，可随意指定其类型
+
+  定义时如果不指定默认值，则每个字段的默认值为该字段类型的默认值
+
+  使用注解时无需重写全部字段，如果重写 `value` 字段，则可以省略该字段名
+
+
+
+### 17.2、示例
+
+* 定义一个注解类
+
+  ```x
+  /**
+   * 定义一个注解类
+   */
+  @Target(CLASS)
+  pub annotate AnnotationX {
+  	
+  	/**
+  	 * 指定默认字段的类型为 string
+  	 */
+  	string value;
+  	
+  	/**
+  	 * 一个 int 类型的字段，默认值为 0
+  	 */
+  	int age;
+  	
+  	/**
+  	 * 默认值为 22
+  	 */
+  	int count = 22;
+  }
+  ```
+
+* 使用注解类
+
+  使用 `@` 符号来指定当前使用的注解类
+
+  ```x
+  @AnnotationX("指定 value 字段的值")
+  pub class TestClass {}
+  
+  @AnnotationX(value = "也可以显示指定")
+  
+  // 其他字段必须显示指定
+  @AnnotationX(age = 22)
+  ```
+
+* 注解内容获取
+
+  > TODO：待定
 
 
 
 ## 18、泛型
 
+顾名思义，广泛地指定一些类型的符号
+
+可以用在任何地方
+
+### 18.1、声明
+
+泛型声明需要借助一个或多个 `<>` 对来完成
+
+```x
+/**
+ * 在函数中声明
+ * 可以用声明过的泛型来定义参数类型和返回值类型
+ */
+pub fn test<T>(T param) -> T {
+	return param;
+}s
+
+/**
+ * 在类上声明泛型
+ * 在 X 类上声明一种名为 T 的泛型
+ */
+pub class X<T> {
+	
+	/**
+	 * 声明后就可以用泛型代替类型来声明字段
+	 * 则此处 data 字段的类型由最终创建 X 类对象时传入的类型决定
+	 */
+	pub T data;
+	
+	/**
+	 * 在方法中使用
+	 * 可以用声明过的泛型来定义参数类型和返回值类型
+	 */
+	pub test() -> T {
+		return data;
+	}
+	
+	/**
+	 * 在方法中使用
+	 * 也可以再声明一些未声明过的泛型
+	 * 可以用声明过的泛型来定义参数类型和返回值类型
+	 */
+	pub test<U>(U param) -> T {
+		return data;
+	}
+}
+```
+
+
+
+### 18.2、调用方
+
+ 在定义变量和调用方法时指定对应的泛型类型
+
+一个变量的泛型类型一旦确定后将无法再进行修改
+
+```x
+fn main() {
+	X<string> x = X<string>();
+	
+	// 构造函数处的泛型可省略
+	X<string> x = X<>();
+	
+	// 自动推倒方式必须指定类型
+	x := X<string>();
+	
+	// 调用方法
+	string res = x.test();
+	
+	// 调用存在自定义泛型的方法
+	// 调用处无需显示指定泛型类型，当然指定也没问题
+	string res = x.test(22);
+	string res = x.test<int>(22);
+	
+	// 调用有泛型的函数
+	test<X<string>>(x);
+	test(x);
+}
+
+pub fn test<B>(B b) {
+	// doSth...
+}
+```
+
+
+
+### 18.3、泛型擦除问题
+
+> TODO：后续考虑实现
+
 
 
 ## 19、并发
 
+并发采用 “协程” 实现
+
+用 `bee` 关键字执行异步函数，配合内置类 `Channel<T>` 来进行各协程间的数据传递
+
+`Channel<T>` 类的内部实现
+
+```x
+pub class Channel<T> {
+
+	pub get() -> T {
+		// 实现逻辑
+	}
+	
+	pub send(T t) {
+		// 实现逻辑
+	}
+}
+```
+
+
+
+### 19.1、普通用法
+
+```x
+/**
+ * 定义一个函数
+ */
+fn asyncFn() {
+}
+
+fn asyncFn(MyChannel chan) {
+	// 回传数据
+	chan.send("Hello");
+}
+
+fn main() {
+	// 异步执行函数
+	// 调用时不关心其返回值
+	bee asyncFn();
+	
+	// 协程中有数据回传
+	Channel<string> chan = MyChannel();
+	// 阻塞接收数据
+	for {
+		// 两种方式接收
+		res := <- chan;
+		// 也可以用 get() 方法接收
+		res := chan.get();
+		// 指定类型
+		string res = chan.get();
+		
+		// res 就是协程中传回的数据
+	}
+	
+	// 异步执行，传入 chan 参数
+	bee asyncFn(chan);
+	
+	// 闭包写法
+	// 需要将内部需要用到的变量通过闭包传递进去
+	bee fn(int param) {
+		println("param = {param}");
+	} (22);
+}
+
+/**
+ * 一般只需要自定义指定泛型类型即可，无需进行其他干涉
+ */
+class MyChannel : Channel<string> {
+}
+```
+
+
+
+### 19.2、锁
+
+> 并发操作中必然涉及公共资源的争抢，此时需要一把 “锁” 来配合使用才能保证资源被安全地调度使用
+
+#### 19.2.1、互斥锁
+
+内置的 `Mutex` 类
+
+> TODO：待设计
+
+#### 19.2.2、读写锁
+
+内置的 `RwLock` 类
+
+> TODO：待设计
+
 
 
 ## 20、内置函数
+
+> 提供一些内置函数
+
+### 20.1、`format` 函数
+
+用于格式化字符串，返回格式化后的结果
+
+两种方式的占位符
+
+* `{}` 符号
+* `{标识符}` 符号
+
+```x
+// 普通格式化
+string res = format("name = {}, age = {}", "X.Lang", 22);
+
+// 可直接在 {} 符号中指定在作用域内的标识符（变量、常量或者参数等）
+string name = "X.Lang";
+int age = 22;
+string res = format("name = {name}, age = {age}");
+```
+
+
+
+### 20.2、`print` 函数
+
+用于将字符串打印到控制台，无返回值
+
+内部自动调用了 `format` 函数
+
+```
+// 直接打印
+print("Hello X");
+
+// 需先调用 format 函数，再打印其返回值
+print("name = {}, age = {}", "X.Lang", 22);
+```
+
+
+
+### 20.3、`println` 函数
+
+在传入的字符串末尾加上换行符（`\n` 或 `\r\n`）
+
+再调用 `print` 函数将数据打印到控制台
+
+```x
+println("Hello X");
+println("name = {}, age = {}", "X.Lang", 22);
+```
+
+
+
+### 20.4、`panic` 函数
+
+程序崩溃时，输出错误堆栈信息到控制台，最后再终结进程
+
+调用 `println` 函数后主动终结进程
+
+```x
+panic("Hello X");
+panic("name = {}, age = {}", "X.Lang", 22);
+```
+

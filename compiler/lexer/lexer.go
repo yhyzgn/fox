@@ -379,6 +379,11 @@ redo:
 		l.tok = Question
 		l.literal = "?"
 
+	case '@':
+		l.nextCh()
+		l.tok = At
+		l.literal = "@"
+
 	default:
 		l.errorf("Invalid character %#U", l.ch)
 		l.nextCh()

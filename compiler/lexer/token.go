@@ -44,8 +44,7 @@ const (
 	Throws    // throws
 	Throw     // throw
 	Nil       // nil
-	Chan      // chan
-	Run       // run
+	Bee       // bee
 	Goto      // goto
 
 	Byte   // byte
@@ -112,6 +111,7 @@ const (
 	Dot       // .
 	DotDot    // ..
 	DotDotDot // ...
+	At        // @
 
 	Comment // // /* comment */ /** doc */
 
