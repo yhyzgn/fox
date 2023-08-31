@@ -6,8 +6,13 @@
 
 package main
 
-import "fmt"
+import (
+	"compiler/loader"
+	"flag"
+)
 
 func main() {
-	fmt.Println("Hello X")
+	flag.Parse()
+
+	loader.LoadPkg(flag.Args())
 }
