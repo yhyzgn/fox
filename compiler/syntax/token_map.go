@@ -4,7 +4,7 @@
 // version: 1.0.0
 // desc   :
 
-package lexer
+package syntax
 
 var tokenMap = map[token]string{
 	Identifier: "IDENTIFIER",

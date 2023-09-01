@@ -4,7 +4,7 @@
 // version: 1.0.0
 // desc   :
 
-package lexer
+package syntax
 
 import (
 	"fmt"
@@ -17,8 +17,8 @@ func errHandler(line, col uint, msg string) {
 }
 
 func TestSmoke(t *testing.T) {
-	const src = "if (+foo\t+=..123/*块注释*/...666/**文档注释*/0.9_0e-0i'a'`raw`\"string\"....234..f.;->// 行注释\n"
-	tokens := []token{If, Lparen, Add, Identifier, AddAssign, Dot, Literal, Comment, DotDot, Literal, Comment, Literal, Literal, Literal, Literal, DotDotDot, Literal, DotDot, Identifier, Dot, Semi, Arrow, Comment, EOF}
+	const src = "/*\n编译也跳过块注释\n*//**/if (+foo\t+=..123/*块注释*/...666/**文档注释*/0.9_0e-0i'a'`raw`\"string\"....234..f.;->// 行注释\n"
+	tokens := []token{Comment, Comment, If, Lparen, Add, Identifier, AddAssign, Dot, Literal, Comment, DotDot, Literal, Comment, Literal, Literal, Literal, Literal, DotDotDot, Literal, DotDot, Identifier, Dot, Semi, Arrow, Comment, EOF}
 
 	var got lexer
 	got.init(strings.NewReader(src), errHandler)

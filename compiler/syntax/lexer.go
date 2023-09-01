@@ -4,7 +4,7 @@
 // version: 1.0.0
 // desc   :
 
-package lexer
+package syntax
 
 import (
 	"fmt"
@@ -218,9 +218,14 @@ redo:
 			l.nextCh()
 			if l.ch == '*' {
 				l.nextCh()
-				l.docComment()
-				break
+				if l.ch != '/' {
+					l.nextCh()
+					l.docComment()
+					break
+				}
 			}
+			l.rewind()
+			l.nextCh()
 			l.blockComment()
 			break
 		}
@@ -404,34 +409,35 @@ func (l *lexer) lineComment() {
 }
 
 func (l *lexer) blockComment() {
-	if l.skipComment() {
-		l.tok = Comment
-		l.kind = BlockCommentLit
-		l.literal = string(l.segment())
+	for {
+		l.nextCh()
+		if l.ch == '*' {
+			l.nextCh()
+			if l.ch == '/' {
+				l.nextCh()
+				l.tok = Comment
+				l.kind = BlockCommentLit
+				l.literal = string(l.segment())
+				break
+			}
+		}
 	}
 }
 
 func (l *lexer) docComment() {
-	if l.skipComment() {
-		l.tok = Comment
-		l.kind = DocCommentLit
-		l.literal = string(l.segment())
-	}
-}
-
-func (l *lexer) skipComment() bool {
-	for l.ch >= 0 {
-		for l.ch == '*' {
+	for {
+		l.nextCh()
+		if l.ch == '*' {
 			l.nextCh()
 			if l.ch == '/' {
 				l.nextCh()
-				return true
+				l.tok = Comment
+				l.kind = DocCommentLit
+				l.literal = string(l.segment())
+				break
 			}
 		}
-		l.nextCh()
 	}
-	l.errorAtf(0, "comment not terminated")
-	return false
 }
 
 func (l *lexer) rune() {

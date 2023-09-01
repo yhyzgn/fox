@@ -7,12 +7,12 @@
 package main
 
 import (
-	"compiler/loader"
+	"compiler/syntax"
 	"flag"
 )
 
 func main() {
 	flag.Parse()
 
-	loader.LoadPkg(flag.Args())
+	syntax.LoadPkg(flag.Args())
 }
