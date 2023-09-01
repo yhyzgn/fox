@@ -6,6 +6,8 @@
 
 package syntax
 
+import "fmt"
+
 type CommentInfo struct {
 	content string
 	kind    LiteralKind
@@ -30,4 +32,8 @@ func NewDocComment(content string) CommentInfo {
 		content: content,
 		kind:    DocCommentLit,
 	}
+}
+
+func (i *CommentInfo) String() string {
+	return fmt.Sprintf("%s: %s", i.kind.String(), i.content)
 }

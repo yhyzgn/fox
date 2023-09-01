@@ -29,6 +29,7 @@ func (p *parser) init(fileObj *FileObj, src io.Reader, errHandler types.ErrHandl
 	})
 }
 
+// SourceFile = PackageDecl ";" { ImportDecl ";" } { TopLevelDecl ";" }
 func (p *parser) fileOrNil() *File {
 	p.next()
 
@@ -48,7 +49,7 @@ func (p *parser) fileOrNil() *File {
 		p.next()
 	}
 
-	// 包声明
+	// PackageDecl
 	if !p.got(Pkg) {
 		p.syntaxError("pkg statement must be first of file.")
 		return nil
@@ -56,8 +57,82 @@ func (p *parser) fileOrNil() *File {
 	p.pkgName = p.name(docComment)
 	p.except(Semi)
 
-	//
+	// 跳过注释
+	for {
+		if p.tok != Comment {
+			break
+		}
+		p.next()
+	}
+
+	// ImportDecl = "import" ImportSpec ";"
+	prev := Import
+	for p.tok != EOF {
+		if p.tok == Import && prev != Import {
+			// import 语句只能在顶部
+			p.syntaxError("Import must appeared before other declarations")
+		}
+		prev = p.tok
+
+		switch p.tok {
+		case Import:
+			p.next()
+			dl := p.importDecl()
+			f.DeclList = append(f.DeclList, dl)
+
+		case Const:
+			p.next()
+
+		case Pub:
+			p.next()
+
+		case Pri:
+			p.next()
+
+		case Class:
+			p.next()
+
+		case Interface:
+			p.next()
+
+		case Enum:
+			p.next()
+
+		case Annotate:
+			p.next()
+
+		case Fn:
+			p.next()
+
+		default:
+			p.next()
+		}
+	}
+
 	return f
+}
+
+// ImportDecl = "import" ImportSpec ";"
+// ImportSpec = [ PkgPath | PkgName]
+// PkgPath = [PkgName | PkgName "." PkgName]
+// PkgName = identifier
+func (p *parser) importDecl() Decl {
+	nm := new(Name)
+	nm.pos = p.pos()
+	nm.literal = ""
+	for p.tok != Semi {
+		switch p.tok {
+		case Identifier, Dot:
+			nm.literal += p.literal
+		default:
+			p.syntaxError("Unknown symbol token: " + p.literal)
+		}
+		p.next()
+	}
+	p.next()
+	d := new(ImportDecl)
+	d.Name = nm
+	return d
 }
 
 func (p *parser) got(tok token) bool {
@@ -95,19 +170,6 @@ func (p *parser) posAt(line uint, col uint) Pos {
 }
 
 func (p *parser) syntaxError(msg string) {
+	// 这里需要报错，并终止程序
 	panic(msg)
-}
-
-type Name struct {
-	pos        Pos
-	literal    string
-	docComment CommentInfo
-}
-
-func NewName(pos Pos, literal, docComment string) *Name {
-	return &Name{
-		pos:        pos,
-		literal:    literal,
-		docComment: NewDocComment(docComment),
-	}
 }

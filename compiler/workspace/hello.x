@@ -7,6 +7,9 @@
 */
 pkg main;
 
+import com.xx.ddd;
+import com.xx.aaa;
+
 fn main() {
     println("Hello X");
 }

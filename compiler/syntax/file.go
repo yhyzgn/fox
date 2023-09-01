@@ -32,7 +32,8 @@ func NewFileObj(filename string, trimmed bool) *FileObj {
 }
 
 type File struct {
-	PkgName *Name
+	PkgName  *Name
+	DeclList []Decl
 }
 
 type fileItem struct {
