@@ -646,12 +646,12 @@ func (l *lexer) ident() {
 
 func (l *lexer) digits(base int, invalid *int) (digsep int) {
 	if base <= 10 {
-		max := rune('0' + base)
+		maxValue := rune('0' + base)
 		for isDecimal(l.ch) || l.ch == '_' {
 			ds := 1
 			if l.ch == '_' {
 				ds = 2
-			} else if l.ch >= max && *invalid < 0 {
+			} else if l.ch >= maxValue && *invalid < 0 {
 				_, col := l.pos()
 				*invalid = int(col - l.col)
 			}
@@ -695,8 +695,8 @@ func (l *lexer) atIdentChar(first bool) bool {
 
 func (l *lexer) escape(quote rune) bool {
 	var (
-		n            int
-		base, max, x uint32
+		n                 int
+		base, maxValue, x uint32
 	)
 
 	switch l.ch {
@@ -704,16 +704,16 @@ func (l *lexer) escape(quote rune) bool {
 		l.nextCh()
 		return true
 	case '0', '1', '2', '3', '4', '5', '6', '7':
-		n, base, max = 3, 8, 255
+		n, base, maxValue = 3, 8, 255
 	case 'x':
 		l.nextCh()
-		n, base, max = 2, 16, 255
+		n, base, maxValue = 2, 16, 255
 	case 'u':
 		l.nextCh()
-		n, base, max = 4, 16, unicode.MaxRune
+		n, base, maxValue = 4, 16, unicode.MaxRune
 	case 'U':
 		l.nextCh()
-		n, base, max = 8, 16, unicode.MaxRune
+		n, base, maxValue = 8, 16, unicode.MaxRune
 	default:
 		if l.ch < 0 {
 			return true
@@ -743,12 +743,12 @@ func (l *lexer) escape(quote rune) bool {
 		l.nextCh()
 	}
 
-	if x > max && base == 8 {
+	if x > maxValue && base == 8 {
 		l.errorf("Octal escape value %d > 255", x)
 		return false
 	}
 
-	if x > max || 0xD800 <= x && x < 0xE000 {
+	if x > maxValue || 0xD800 <= x && x < 0xE000 {
 		l.errorf("Escape is invalid Unicode code point %#U", x)
 		return false
 	}
