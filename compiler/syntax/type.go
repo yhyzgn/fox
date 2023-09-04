@@ -35,21 +35,19 @@ type (
 )
 
 type Name struct {
-	pos        Pos
-	literal    string
-	docComment CommentInfo
+	pos     Pos
+	literal string
 }
 
-func NewName(pos Pos, literal, docComment string) *Name {
+func NewName(pos Pos, literal string) *Name {
 	return &Name{
-		pos:        pos,
-		literal:    literal,
-		docComment: NewDocComment(docComment),
+		pos:     pos,
+		literal: literal,
 	}
 }
 
 func (n *Name) String() string {
-	return fmt.Sprintf("%s: %s %s", n.pos.String(), n.literal, n.docComment.content)
+	return fmt.Sprintf("%s: %s", n.pos.String(), n.literal)
 }
 
 type declAdapter struct {

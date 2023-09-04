@@ -212,22 +212,12 @@ redo:
 		if l.ch == '/' {
 			l.nextCh()
 			l.lineComment()
-			break
+			goto redo
 		}
 		if l.ch == '*' {
 			l.nextCh()
-			if l.ch == '*' {
-				l.nextCh()
-				if l.ch != '/' {
-					l.nextCh()
-					l.docComment()
-					break
-				}
-			}
-			l.rewind()
-			l.nextCh()
 			l.blockComment()
-			break
+			goto redo
 		}
 		if l.ch == '=' {
 			l.nextCh()
@@ -397,47 +387,39 @@ redo:
 }
 
 func (l *lexer) lineComment() {
-	for {
-		l.nextCh()
-		if l.ch == '\n' {
-			l.tok = Comment
-			l.kind = LineCommentLit
-			l.literal = string(l.segment())
-			break
-		}
-	}
+	l.skipLine()
+	l.comment(string(l.segment()))
 }
 
 func (l *lexer) blockComment() {
-	for {
-		l.nextCh()
-		if l.ch == '*' {
-			l.nextCh()
-			if l.ch == '/' {
-				l.nextCh()
-				l.tok = Comment
-				l.kind = BlockCommentLit
-				l.literal = string(l.segment())
-				break
-			}
-		}
+	if l.skipComment() {
+		l.comment(string(l.segment()))
 	}
 }
 
-func (l *lexer) docComment() {
-	for {
+func (l *lexer) comment(comment string) {
+	fmt.Println(comment)
+}
+
+func (l *lexer) skipLine() {
+	for l.ch >= 0 && l.ch != '\n' {
 		l.nextCh()
-		if l.ch == '*' {
+	}
+}
+
+func (l *lexer) skipComment() bool {
+	for l.ch >= 0 {
+		for l.ch == '*' {
 			l.nextCh()
 			if l.ch == '/' {
 				l.nextCh()
-				l.tok = Comment
-				l.kind = DocCommentLit
-				l.literal = string(l.segment())
-				break
+				return true
 			}
 		}
+		l.nextCh()
 	}
+	l.errorAtf(0, "comment not terminated")
+	return false
 }
 
 func (l *lexer) rune() {

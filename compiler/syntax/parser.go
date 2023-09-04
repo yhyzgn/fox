@@ -35,35 +35,13 @@ func (p *parser) fileOrNil() *File {
 
 	f := new(File)
 
-	// 注释
-	var docComment string
-	for {
-		if p.tok != Comment {
-			break
-		}
-		if p.kind != DocCommentLit {
-			p.next()
-			continue
-		}
-		docComment = p.literal
-		p.next()
-	}
-
 	// PackageDecl
 	if !p.got(Pkg) {
 		p.syntaxError("pkg statement must be first of file.")
 		return nil
 	}
-	p.pkgName = p.name(docComment)
+	p.pkgName = p.name()
 	p.except(Semi)
-
-	// 跳过注释
-	for {
-		if p.tok != Comment {
-			break
-		}
-		p.next()
-	}
 
 	// ImportDecl = "import" ImportSpec ";"
 	prev := Import
@@ -149,14 +127,14 @@ func (p *parser) except(tok token) {
 	}
 }
 
-func (p *parser) name(docComment string) *Name {
+func (p *parser) name() *Name {
 	if p.tok == Identifier {
-		nm := NewName(p.pos(), p.literal, docComment)
+		nm := NewName(p.pos(), p.literal)
 		p.next()
 		return nm
 	}
 
-	n := NewName(p.pos(), "_", docComment)
+	n := NewName(p.pos(), "_")
 	p.syntaxError("expected name")
 	return n
 }

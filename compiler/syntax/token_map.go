@@ -105,7 +105,6 @@ var tokenMap = map[token]string{
 	DotDot:     "..",
 	DotDotDot:  "...",
 	At:         "@",
-	Comment:    "COMMENT",
 	EOF:        "EOF",
 	Error:      "ERROR",
 }
@@ -115,15 +114,12 @@ func (t token) String() string {
 }
 
 var literalKindMap = map[LiteralKind]string{
-	None:            "NONE",
-	IntLit:          "int",
-	FloatLit:        "float",
-	ImagLit:         "imag",
-	CharLit:         "char",
-	StringLit:       "string",
-	LineCommentLit:  "LINE_COMMENT",
-	BlockCommentLit: "BLOCK_COMMENT",
-	DocCommentLit:   "DOC_COMMENT",
+	None:      "NONE",
+	IntLit:    "int",
+	FloatLit:  "float",
+	ImagLit:   "imag",
+	CharLit:   "char",
+	StringLit: "string",
 }
 
 func (lk LiteralKind) String() string {

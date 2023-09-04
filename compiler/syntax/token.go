@@ -113,8 +113,6 @@ const (
 	DotDotDot // ...
 	At        // @
 
-	Comment // // /* comment */ /** doc */
-
 	EOF   // EOF
 	Error // error
 )
@@ -128,7 +126,4 @@ const (
 	ImagLit
 	CharLit
 	StringLit
-	LineCommentLit
-	BlockCommentLit
-	DocCommentLit
 )
